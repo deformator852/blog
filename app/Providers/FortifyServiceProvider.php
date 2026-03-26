@@ -50,8 +50,6 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::loginView(fn(Request $request) => Inertia::render('auth/Login', [
             'status' => $request->session()->get('status'),
         ]));
-
-        Fortify::registerView(fn() => Inertia::render('auth/Register'));
     }
 
     /**
