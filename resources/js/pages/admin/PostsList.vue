@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import { Link } from '@inertiajs/vue3';
 const columns = [
     { key: 'id', label: 'ID' },
-    { key: 'title', label: 'Заголовок' },
-    { key: 'author', label: 'Автор' },
-    { key: 'status', label: 'Статус' },
-    { key: 'created_at', label: 'Дата' },
+    { key: 'title', label: 'Title' },
+    { key: 'author', label: 'Author' },
+    { key: 'status', label: 'Status' },
+    { key: 'created_at', label: 'Date' },
 ];
 
 const rows = [
@@ -34,8 +35,16 @@ const rows = [
 
 <template>
     <div class="p-6">
-        <h1 class="mb-4 text-xl font-semibold text-zinc-100">Список постів</h1>
+        <div class="mb-4 flex items-center justify-between">
+            <h1 class="text-xl font-semibold text-zinc-100">Posts</h1>
 
+            <Link
+                href="/admin/posts/create"
+                class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-150 hover:bg-indigo-500"
+            >
+                Create post
+            </Link>
+        </div>
         <div
             class="w-full overflow-x-auto rounded-xl border border-zinc-700/60 shadow-lg"
         >

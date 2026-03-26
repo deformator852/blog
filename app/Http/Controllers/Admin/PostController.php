@@ -12,4 +12,9 @@ class PostController extends Controller
     {
         return Inertia::render('admin/PostsList');
     }
+
+    public function create(): Response
+    {
+        return Inertia::render('admin/CreatePost');
+    }
 }
