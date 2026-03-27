@@ -1,50 +1,69 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-const columns = [
-    { key: 'id', label: 'ID' },
-    { key: 'title', label: 'Title' },
-    { key: 'author', label: 'Author' },
-    { key: 'status', label: 'Status' },
-    { key: 'created_at', label: 'Date' },
-];
+import { computed } from 'vue';
 
-const rows = [
-    {
-        id: 1,
-        title: 'Перший пост',
-        author: 'Іван',
-        status: 'Опублікований',
-        created_at: '2024-01-01',
-    },
-    {
-        id: 2,
-        title: 'Другий пост',
-        author: 'Марія',
-        status: 'Чернетка',
-        created_at: '2024-01-05',
-    },
-    {
-        id: 3,
-        title: 'Третій пост',
-        author: 'Олег',
-        status: 'Опублікований',
-        created_at: '2024-01-10',
-    },
-];
+interface Post {
+    id: number;
+    title: string;
+    is_published: boolean;
+    created_at: string;
+}
+
+interface PaginationLink {
+    url: string | null;
+    label: string;
+    active: boolean;
+}
+
+interface PaginatedPosts {
+    data: Post[];
+    current_page: number;
+    last_page: number;
+    total: number;
+    links: PaginationLink[];
+}
+
+const props = defineProps<{
+    posts: PaginatedPosts;
+}>();
+
+const formatLabel = (label: string): string => {
+    if (label === '&laquo; Previous') return '←';
+    if (label === 'Next &raquo;') return '→';
+    return label;
+};
+
+const formatDate = (dateStr: string): string => {
+    return new Intl.DateTimeFormat('en-US', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+    }).format(new Date(dateStr));
+};
+
+const paginationLinks = computed(() =>
+    props.posts.links.filter((link) => link.label !== ''),
+);
+console.log(props.posts);
 </script>
 
 <template>
     <div class="p-6">
         <div class="mb-4 flex items-center justify-between">
-            <h1 class="text-xl font-semibold text-zinc-100">Posts</h1>
-
+            <h1 class="text-xl font-semibold text-zinc-100">
+                Posts
+                <span class="ml-2 text-sm text-zinc-400"
+                    >({{ posts.total }})</span
+                >
+            </h1>
             <Link
                 href="/admin/posts/create"
-                class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-150 hover:bg-indigo-500"
+                class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500"
             >
                 Create post
             </Link>
         </div>
+
         <div
             class="w-full overflow-x-auto rounded-xl border border-zinc-700/60 shadow-lg"
         >
@@ -53,59 +72,91 @@ const rows = [
                     class="bg-zinc-800 text-xs tracking-widest text-zinc-400 uppercase"
                 >
                     <tr>
-                        <th
-                            v-for="col in columns"
-                            :key="col.key"
-                            class="px-6 py-3 font-semibold"
-                        >
-                            {{ col.label }}
-                        </th>
+                        <th class="px-6 py-3 font-semibold">ID</th>
+                        <th class="px-6 py-3 font-semibold">Title</th>
+                        <th class="px-6 py-3 font-semibold">Status</th>
+                        <th class="px-6 py-3 font-semibold">Created</th>
+                        <th class="px-6 py-3 font-semibold"></th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr
-                        v-for="row in rows"
-                        :key="row.id"
-                        class="border-t border-zinc-700/50 bg-zinc-900 text-zinc-300 transition-colors duration-150 hover:bg-zinc-800/70"
+                        v-for="post in posts.data"
+                        :key="post.id"
+                        class="cursor-pointer border-t border-zinc-700/50 bg-zinc-900 text-zinc-300 hover:bg-zinc-800/70"
+                        @click="$inertia.visit(`/admin/posts/${post.id}`)"
                     >
-                        <td
-                            v-for="col in columns"
-                            :key="col.key"
-                            class="px-6 py-4"
-                        >
+                        <td class="px-6 py-4 font-mono text-zinc-500">
+                            #{{ post.id }}
+                        </td>
+                        <td class="px-6 py-4 font-medium text-zinc-100">
+                            {{ post.title }}
+                        </td>
+                        <td class="px-6 py-4">
                             <span
-                                v-if="col.key === 'status'"
                                 :class="[
                                     'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium',
-                                    row.status === 'Опублікований'
+                                    post.is_published
                                         ? 'bg-emerald-900/50 text-emerald-400 ring-1 ring-emerald-500/30'
                                         : 'bg-zinc-700/50 text-zinc-400 ring-1 ring-zinc-500/30',
                                 ]"
                             >
-                                {{ row[col.key] }}
+                                {{ post.is_published ? 'Published' : 'Draft' }}
                             </span>
-                            <span
-                                v-else-if="col.key === 'id'"
-                                class="font-mono text-zinc-500"
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-zinc-400">
+                            {{ formatDate(post.created_at) }}
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <Link
+                                :href="`/admin/posts/${post.id}`"
+                                class="text-xs text-indigo-400 hover:text-indigo-300 hover:underline"
+                                @click.stop
                             >
-                                #{{ row[col.key] }}
-                            </span>
-                            <span v-else>
-                                {{ row[col.key] }}
-                            </span>
+                                Edit →
+                            </Link>
                         </td>
                     </tr>
 
-                    <tr v-if="rows.length === 0">
+                    <tr v-if="posts.data.length === 0">
                         <td
-                            :colspan="columns.length"
+                            colspan="5"
                             class="px-6 py-10 text-center text-zinc-500"
                         >
-                            Немає постів
+                            No posts found
                         </td>
                     </tr>
                 </tbody>
             </table>
+        </div>
+
+        <div
+            class="mt-4 flex items-center justify-between text-sm text-zinc-400"
+        >
+            <span>Page {{ posts.current_page }} of {{ posts.last_page }}</span>
+            <div class="flex gap-1">
+                <template v-for="link in paginationLinks" :key="link.label">
+                    <Link
+                        v-if="link.url !== null"
+                        :href="link.url"
+                        :class="[
+                            'rounded px-3 py-1 transition-colors',
+                            link.active
+                                ? 'bg-indigo-600 text-white'
+                                : 'text-zinc-400 hover:bg-zinc-700',
+                        ]"
+                        preserve-scroll
+                    >
+                        {{ formatLabel(link.label) }}
+                    </Link>
+                    <span
+                        v-else
+                        class="cursor-not-allowed rounded px-3 py-1 text-zinc-600"
+                    >
+                        {{ formatLabel(link.label) }}
+                    </span>
+                </template>
+            </div>
         </div>
     </div>
 </template>

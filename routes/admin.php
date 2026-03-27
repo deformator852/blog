@@ -4,7 +4,8 @@ use App\Http\Controllers\Admin\PostController;
 
 Route::group([
     'prefix' => 'admin',
-    'middleware' => ['auth']
+    'middleware' => ['auth'],
+    'as' => 'admin.',
 ], static function () {
     Route::resource('posts', PostController::class);
 });

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import { useForm, Link } from '@inertiajs/vue3';
+import { ref } from 'vue';
 
 defineProps<{
     categories: { id: number; name: string }[];
@@ -18,7 +18,11 @@ const form = useForm({
 
 function handleImage(e: Event) {
     const file = (e.target as HTMLInputElement).files?.[0];
-    if (!file) return;
+
+    if (!file) {
+        return;
+    }
+
     form.image_path = file;
     imagePreview.value = URL.createObjectURL(file);
 }
@@ -29,7 +33,7 @@ function removeImage() {
 }
 
 function submit() {
-    form.post(route('admin.posts.store'), {
+    form.post('/admin/posts', {
         forceFormData: true,
     });
 }
@@ -51,7 +55,11 @@ function submit() {
             </div>
         </div>
 
-        <form @submit.prevent="submit" class="mx-auto max-w-3xl space-y-6">
+        <form
+            @submit.prevent="submit"
+            class="mx-auto max-w-3xl space-y-6"
+            novalidate
+        >
             <div class="space-y-1.5">
                 <label
                     class="text-xs font-semibold tracking-widest text-zinc-400 uppercase"
@@ -110,7 +118,6 @@ function submit() {
                 </p>
             </div>
 
-            <!-- Image Upload -->
             <div class="space-y-1.5">
                 <label
                     class="text-xs font-semibold tracking-widest text-zinc-400 uppercase"
@@ -118,7 +125,6 @@ function submit() {
                     Image
                 </label>
 
-                <!-- Preview -->
                 <div
                     v-if="imagePreview"
                     class="relative mb-2 overflow-hidden rounded-lg border border-zinc-700"
@@ -133,7 +139,6 @@ function submit() {
                     </button>
                 </div>
 
-                <!-- Drop zone -->
                 <label
                     class="flex w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-zinc-700 bg-zinc-900 px-4 py-8 transition hover:border-indigo-500/50 hover:bg-zinc-800/50"
                 >
