@@ -64,4 +64,9 @@ class PostRepository implements PostRepositoryInterface
             throw $e;
         }
     }
+
+    public function findPublishedById(int $id): Post
+    {
+        return Post::with('category')->where('id', $id)->where('is_published', true)->firstOrFail();
+    }
 }

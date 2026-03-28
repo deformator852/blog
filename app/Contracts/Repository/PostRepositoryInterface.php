@@ -33,4 +33,6 @@ interface PostRepositoryInterface
      * } $data
      */
     public function update(Post $post, array $data = [], ?UploadedFile $image = null): Post;
+
+    public function findPublishedById(int $id): Post;
 }

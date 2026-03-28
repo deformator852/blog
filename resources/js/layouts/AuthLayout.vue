@@ -1,14 +1,17 @@
 <script setup lang="ts">
-import AuthLayout from '@/layouts/auth/AuthSimpleLayout.vue';
+import AuthSimpleLayout from '@/layouts/auth/AuthSimpleLayout.vue';
+import type { BreadcrumbItem } from '@/types';
 
 const { title = '', description = '' } = defineProps<{
     title?: string;
     description?: string;
+    breadcrumbs?: BreadcrumbItem[];
 }>();
+
 </script>
 
 <template>
-    <AuthLayout :title="title" :description="description">
+    <AuthSimpleLayout :title="title" :description="description">
         <slot />
-    </AuthLayout>
+    </AuthSimpleLayout>
 </template>

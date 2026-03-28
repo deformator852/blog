@@ -1,6 +1,4 @@
 <script setup lang="ts">
-// import { Link } from '@inertiajs/vue3';
-// import { home } from '@/routes';
 import AppContent from '@/components/AppContent.vue';
 import AppShell from '@/components/AppShell.vue';
 import AppSidebar from '@/components/AppSidebar.vue';
