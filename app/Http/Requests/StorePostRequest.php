@@ -27,7 +27,7 @@ class StorePostRequest extends FormRequest
             'content' => ['required', 'string'],
             'category_id' => ['required', 'exists:categories,id'],
             'image_path' => ['required', 'image', 'mimes:jpg,png,webp', 'max:10240'],
-            'is_published' => ['required', 'boolean', 'default' => false]
+            'is_published' => ['required', 'boolean', 'default' => false],
         ];
     }
 }
