@@ -8,6 +8,7 @@ use App\Contracts\Repository\PostRepositoryInterface;
 use App\Models\Post;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Throwable;
 
@@ -21,11 +22,26 @@ class PostRepository implements PostRepositoryInterface
         try {
             return Post::create($data);
         } catch (Throwable $e) {
+            Log::error($e->getMessage());
             if ($path && Storage::disk('public')->exists($path)) {
                 Storage::disk('public')->delete($path);
             }
             throw $e;
         }
+    }
+
+    public function findAllByCategoryPaginated(?string $categorySlug = null, int $perPage = 10): LengthAwarePaginator
+    {
+        return Post::query()
+            ->with('category')
+            ->where('is_published', true)
+            ->when($categorySlug, fn ($q) => $q->whereHas(
+                'category', fn ($q) => $q->where('slug', $categorySlug)
+            ))
+            ->distinct()
+            ->latest()
+            ->paginate($perPage)
+            ->withQueryString();
     }
 
     public function findAllPaginated(int $perPage = 10): LengthAwarePaginator
@@ -57,6 +73,7 @@ class PostRepository implements PostRepositoryInterface
 
             return $post->fresh();
         } catch (Throwable $e) {
+            Log::error($e->getMessage());
             if ($image && isset($path) && Storage::disk('public')->exists($path)) {
                 Storage::disk('public')->delete($path);
             }

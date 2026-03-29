@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
-import { home } from '@/routes';
+
 import { store } from '@/routes/login';
 
 
@@ -25,9 +25,7 @@ const description = 'Enter your email and password below to log in'
         <div class="w-full max-w-sm">
             <div class="flex flex-col gap-8">
                 <div class="flex flex-col items-center gap-4">
-                    <Link :href="home()" class="flex flex-col items-center gap-2 font-medium">
                     <span class="sr-only">{{ title }}</span>
-                    </Link>
                     <div class="space-y-2 text-center">
                         <h1 class="text-xl font-medium">{{ title }}</h1>
                         <p class="text-center text-sm text-muted-foreground">

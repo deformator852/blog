@@ -1,13 +1,26 @@
 <script setup lang="ts">
 import { useForm, Link } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { route } from 'ziggy-js';
+import { useImageUpload } from '@/composables/useImageUpload';
 import AuthLayout from '@/layouts/AuthLayout.vue';
+import type { Category } from '@/types/models/category';
 
 defineProps<{
-    categories: { id: number; name: string }[];
+    categories: Category[];
 }>();
 
-const imagePreview = ref<string | null>(null);
+function onImageChange(e: Event) {
+    const input = e.target as HTMLInputElement;
+
+    if (input.files && input.files[0]) {
+        const file = input.files[0];
+
+        handleImage(e);
+        form.image_path = file;
+    }
+}
+
+const { imagePreview, handleImage, removeImage } = useImageUpload();
 
 const form = useForm({
     title: '',
@@ -17,21 +30,6 @@ const form = useForm({
     is_published: false,
 });
 
-function handleImage(e: Event) {
-    const file = (e.target as HTMLInputElement).files?.[0];
-
-    if (!file) {
-        return;
-    }
-
-    form.image_path = file;
-    imagePreview.value = URL.createObjectURL(file);
-}
-
-function removeImage() {
-    form.image_path = null;
-    imagePreview.value = null;
-}
 
 function submit() {
     form.post('/admin/posts', {
@@ -45,7 +43,7 @@ function submit() {
         <div class="min-h-screen bg-zinc-950 p-6 text-zinc-100">
             <div class="mb-8 flex items-center justify-between">
                 <div>
-                    <Link href="/admin/posts"
+                    <Link :href="route('admin.posts.index')"
                         class="mb-2 flex items-center gap-1 text-xs text-zinc-500 transition hover:text-zinc-300">
                         ← Back
                     </Link>
@@ -112,7 +110,8 @@ function submit() {
                         <span class="text-2xl">🖼️</span>
                         <span class="text-sm text-zinc-400">Click or drag image here</span>
                         <span class="text-xs text-zinc-600">PNG, JPG, WEBP up to 2MB</span>
-                        <input type="file" accept="image/*" class="hidden" @change="handleImage" />
+                        <input type="file" accept="image/*" class="hidden" @change="onImageChange" />
+                        <!-- <input type="file" accept="image/*" class="hidden" @change="handleImage" /> -->
                     </label>
 
                     <p v-if="form.errors.image_path" class="text-xs text-red-400">
@@ -136,7 +135,7 @@ function submit() {
                 </div>
 
                 <div class="flex items-center justify-end gap-3 border-t border-zinc-800 pt-6">
-                    <Link href="/admin/posts"
+                    <Link :href="route('admin.posts.index')"
                         class="rounded-lg border border-zinc-700 px-5 py-2.5 text-sm text-zinc-400 transition hover:border-zinc-500 hover:text-zinc-200">
                         Cancel
                     </Link>

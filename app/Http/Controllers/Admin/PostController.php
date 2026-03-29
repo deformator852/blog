@@ -9,6 +9,7 @@ use App\Http\Requests\UpdatePostRequest;
 use App\Models\Category;
 use App\Models\Post;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -42,6 +43,8 @@ class PostController extends Controller
             return redirect()->route('admin.posts.index')
                 ->with('success', 'Post created successfully.');
         } catch (\Exception $e) {
+            Log::error($e->getMessage());
+
             return redirect()->route('admin.posts.index')
                 ->with('error', 'Failed to create post');
         }
@@ -51,13 +54,14 @@ class PostController extends Controller
     {
         $data = $request->validated();
         $image = $request->file('image_path');
-
         try {
             $this->postRepository->update($post, $data, $image);
 
             return redirect()->route('admin.posts.index')
                 ->with('success', 'Post updated successfully.');
         } catch (\Exception $e) {
+            Log::error($e->getMessage());
+
             return redirect()->route('admin.posts.edit', $post)
                 ->with('error', 'Failed to update post.');
         }
@@ -78,6 +82,8 @@ class PostController extends Controller
             return redirect()->route('admin.posts.index')
                 ->with('success', 'Post deleted successfully.');
         } catch (\Exception $e) {
+            Log::error($e->getMessage());
+
             return redirect()->route('admin.posts.index')
                 ->with('error', 'Failed to delete post.');
         }

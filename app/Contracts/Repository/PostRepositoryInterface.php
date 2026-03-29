@@ -22,6 +22,8 @@ interface PostRepositoryInterface
 
     public function findAllPaginated(int $perPage = 10): LengthAwarePaginator;
 
+    public function findAllByCategoryPaginated(?string $categorySlug = null, int $perPage = 10): LengthAwarePaginator;
+
     public function delete(Post $post): void;
 
     /**

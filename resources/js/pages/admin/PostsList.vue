@@ -1,53 +1,20 @@
 <script setup lang="ts">
 import { Link, router, usePage } from '@inertiajs/vue3';
 import { computed, ref, watch } from 'vue';
+import { route } from 'ziggy-js';
 import AuthLayout from '@/layouts/AuthLayout.vue';
-import { formatDate } from '@/lib/utils';
-
-interface Post {
-    id: number;
-    title: string;
-    is_published: boolean;
-    created_at: string;
-}
-
-interface PaginationLink {
-    url: string | null;
-    label: string;
-    active: boolean;
-}
-
-interface PaginatedPosts {
-    data: Post[];
-    current_page: number;
-    last_page: number;
-    total: number;
-    links: PaginationLink[];
-}
+import { formatDate, formatLabel } from '@/lib/utils';
+import type { PaginatedPosts } from '@/types/pagination';
 
 const props = defineProps<{
     posts: PaginatedPosts;
 }>();
 
-const formatLabel = (label: string): string => {
-    if (label === '&laquo; Previous') {
-        return '←';
-    }
-
-    if (label === 'Next &raquo;') {
-        return '→';
-    }
-
-
-    return label;
-};
-
 const confirmDelete = (postId: number) => {
     if (confirm('Are you sure you want to delete this post?')) {
-        router.delete(`/admin/posts/${postId}`);
+        router.delete(route('admin.posts.destroy', { post: postId }));
     }
 };
-
 
 const paginationLinks = computed(() =>
     props.posts.links.filter((link) => link.label !== ''),
@@ -78,7 +45,7 @@ watch(
                     Posts
                     <span class="ml-2 text-sm text-zinc-400">({{ posts.total }})</span>
                 </h1>
-                <Link href="/admin/posts/create"
+                <Link :href="route('admin.posts.create')"
                     class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500">
                     Create post
                 </Link>
@@ -133,12 +100,12 @@ watch(
                                     class="text-xs text-red-500 hover:text-red-400 hover:underline transition-colors">
                                     Delete
                                 </Link>
-                                <Link :href="`/admin/posts/${post.id}/edit`"
+                                <Link :href="route('admin.posts.edit', { post: post.id })"
                                     class="text-xs text-indigo-400 mx-2 hover:text-indigo-300 hover:underline"
                                     @click.stop>
                                     Edit
                                 </Link>
-                                <a :href="`/posts/${post.id}`" target="_blank"
+                                <a :href="route('client.posts.show', { id: post.id })" target="_blank"
                                     class="text-xs text-zinc-400 hover:text-zinc-300 hover:underline" @click.stop>
                                     Show
                                 </a>

@@ -18,3 +18,15 @@ export function formatDate(dateStr: string): string {
         year: 'numeric',
     }).format(new Date(dateStr));
 }
+
+export function formatLabel(label: string): string {
+    if (label === '&laquo; Previous') {
+        return '←';
+    }
+
+    if (label === 'Next &raquo;') {
+        return '→';
+    }
+
+    return label;
+}

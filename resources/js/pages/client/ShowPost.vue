@@ -1,26 +1,13 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
+import { route } from 'ziggy-js';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { formatDate } from '@/lib/utils';
+import type { FullPost } from '@/types/models/post';
 
-interface Category {
-    id: number;
-    name: string;
-}
-
-interface Post {
-    id: number;
-    title: string;
-    content: string;
-    image_path: string | null;
-    is_published: boolean;
-    category: Category;
-    created_at: string;
-    updated_at: string;
-}
 
 defineProps<{
-    post: Post;
+    post: FullPost;
 }>();
 </script>
 
@@ -49,7 +36,7 @@ defineProps<{
             <div class="mx-auto max-w-3xl px-6 py-10">
 
                 <div class="mb-8 flex items-center gap-4 border-b border-zinc-700/60 pb-8">
-                    <Link href="/posts"
+                    <Link :href="route('client.posts.index')"
                         class="inline-flex items-center gap-2 text-sm text-zinc-400 transition-colors hover:text-zinc-100">
                         ← All posts
                     </Link>
