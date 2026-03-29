@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Contracts\Repository\CategoryRepositoryInterface;
 use App\Contracts\Repository\PostRepositoryInterface;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePostRequest;
@@ -15,7 +16,9 @@ use Inertia\Response;
 
 class PostController extends Controller
 {
-    public function __construct(private readonly PostRepositoryInterface $postRepository) {}
+    public function __construct(
+        private readonly PostRepositoryInterface $postRepository,
+        private readonly CategoryRepositoryInterface $categoryRepository) {}
 
     public function index(): Response
     {
@@ -69,7 +72,7 @@ class PostController extends Controller
 
     public function edit(Post $post): Response
     {
-        $categories = Category::all();
+        $categories = $this->categoryRepository->findAll();
 
         return Inertia::render('admin/EditPost', compact('post', 'categories'));
     }
