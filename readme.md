@@ -66,14 +66,12 @@ php artisan db:seed --class=CategorySeeder
 php artisan db:seed --class=UserSeeder
 ```
 
-## Pages
-
-# Client
+## Client pages
 
 - `/` - Home / Posts list
 - `/posts/{id}` - View single post
 
-# Admin
+## Admin pages
 
 - `/admin` - Redirects to `/admin/posts`
 - `/admin/posts` - List all posts
